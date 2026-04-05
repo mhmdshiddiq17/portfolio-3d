@@ -6,11 +6,12 @@ import { prisma } from '@/lib/prisma'
 // GET single post by slug
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params
     const post = await prisma.post.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
       include: {
         author: {
           select: {
@@ -54,7 +55,7 @@ export async function GET(
 // PUT update post (admin only)
 export async function PUT(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -66,10 +67,11 @@ export async function PUT(
       )
     }
 
+    const { slug: currentSlug } = await params
     const body = await request.json()
     const {
       title,
-      slug,
+      slug: newSlug,
       excerpt,
       content,
       coverImage,
@@ -83,7 +85,7 @@ export async function PUT(
     } = body
 
     const existingPost = await prisma.post.findUnique({
-      where: { slug: params.slug },
+      where: { slug: currentSlug },
     })
 
     if (!existingPost) {
@@ -94,10 +96,10 @@ export async function PUT(
     }
 
     const post = await prisma.post.update({
-      where: { slug: params.slug },
+      where: { slug: currentSlug },
       data: {
         title,
-        slug,
+        slug: newSlug,
         excerpt,
         content,
         coverImage,
@@ -135,7 +137,7 @@ export async function PUT(
 // DELETE post (admin only)
 export async function DELETE(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -147,8 +149,10 @@ export async function DELETE(
       )
     }
 
+    const { slug } = await params
+
     await prisma.post.delete({
-      where: { slug: params.slug },
+      where: { slug },
     })
 
     return NextResponse.json({ message: 'Post deleted successfully' })

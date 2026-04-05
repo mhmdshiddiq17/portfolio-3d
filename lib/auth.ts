@@ -1,6 +1,5 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from './prisma'
 import bcrypt from 'bcryptjs'
 import { Adapter } from 'next-auth/adapters'
@@ -8,12 +7,13 @@ import { Adapter } from 'next-auth/adapters'
 // Custom adapter untuk SQLite
 function CustomPrismaAdapter(): Adapter {
   return {
-    createUser: async (user) => {
+    async createUser(user: any) {
       const newUser = await prisma.user.create({
         data: {
           email: user.email,
           name: user.name,
           image: user.image,
+          password: user.password || '',
         },
       })
       return {
@@ -21,33 +21,39 @@ function CustomPrismaAdapter(): Adapter {
         email: newUser.email,
         name: newUser.name,
         image: newUser.image,
+        emailVerified: null,
+        role: newUser.role || '',
       }
     },
-    getUser: async (id) => {
+    async getUser(id: string) {
       const user = await prisma.user.findUnique({
         where: { id },
       })
       if (!user) return null
       return {
         id: user.id,
-        email: user.email,
+        email: user.email || '',
         name: user.name,
         image: user.image,
+        emailVerified: null,
+        role: user.role || '',
       }
     },
-    getUserByEmail: async (email) => {
+    async getUserByEmail(email: string) {
       const user = await prisma.user.findUnique({
         where: { email },
       })
       if (!user) return null
       return {
         id: user.id,
-        email: user.email,
+        email: user.email || '',
         name: user.name,
         image: user.image,
+        emailVerified: null,
+        role: user.role || '',
       }
     },
-    createSession: async (data) => {
+    async createSession(data: any) {
       const session = await prisma.session.create({
         data: {
           sessionToken: data.sessionToken,
@@ -61,7 +67,7 @@ function CustomPrismaAdapter(): Adapter {
         expires: session.expires,
       }
     },
-    getSessionAndUser: async (sessionToken) => {
+    async getSessionAndUser(sessionToken: string) {
       const session = await prisma.session.findUnique({
         where: { sessionToken },
         include: { user: true },
@@ -75,13 +81,15 @@ function CustomPrismaAdapter(): Adapter {
         },
         user: {
           id: session.user.id,
-          email: session.user.email,
+          email: session.user.email || '',
           name: session.user.name,
           image: session.user.image,
+          emailVerified: null,
+          role: session.user.role || '',
         },
       }
     },
-    updateUser: async (user) => {
+    async updateUser(user: any) {
       const updatedUser = await prisma.user.update({
         where: { id: user.id },
         data: {
@@ -92,12 +100,14 @@ function CustomPrismaAdapter(): Adapter {
       })
       return {
         id: updatedUser.id,
-        email: updatedUser.email,
+        email: updatedUser.email || '',
         name: updatedUser.name,
         image: updatedUser.image,
+        emailVerified: null,
+        role: updatedUser.role || '',
       }
     },
-    updateSession: async (data) => {
+    async updateSession(data: any) {
       const session = await prisma.session.update({
         where: { sessionToken: data.sessionToken },
         data: {
@@ -110,10 +120,16 @@ function CustomPrismaAdapter(): Adapter {
         expires: session.expires,
       }
     },
-    deleteSession: async (sessionToken) => {
+    async deleteSession(sessionToken: string) {
       await prisma.session.delete({
         where: { sessionToken },
       })
+    },
+    async linkAccount() {
+      return
+    },
+    async getUserByAccount() {
+      return null
     },
   }
 }
@@ -136,7 +152,7 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email }
         })
 
-        if (!user) {
+        if (!user?.password) {
           throw new Error('User tidak ditemukan')
         }
 
@@ -169,16 +185,16 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
-        token.role = (user as any).role
+        token.role = user.role
         token.email = user.email
       }
       return token
     },
     async session({ session, token }) {
       if (session.user && token) {
-        (session.user as any).id = token.id as string
-        (session.user as any).role = token.role as string
-        session.user.email = token.email as string
+        session.user.id = token.id
+        session.user.role = token.role
+        session.user.email = token.email || session.user.email
       }
       return session
     },

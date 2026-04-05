@@ -1,9 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FileText, Eye, Edit, Trash2, Plus, Search, Filter } from 'lucide-react'
 import Link from 'next/link'
+
+interface Post {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  coverImage?: string;
+  published: boolean;
+  featured: boolean;
+  category?: string;
+  views: number;
+  createdAt: string;
+  author: {
+    name: string;
+  };
+}
 
 async function getPosts() {
   const response = await fetch('/api/blog');
@@ -13,10 +29,10 @@ async function getPosts() {
 
 export default function AdminPostsPage() {
   const router = useRouter();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useState(() => {
+  useEffect(() => {
     getPosts().then(setPosts).finally(() => setLoading(false));
   }, []);
 

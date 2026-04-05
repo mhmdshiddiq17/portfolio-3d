@@ -6,11 +6,12 @@ import { prisma } from '@/lib/prisma'
 // GET single post by ID (for admin editing)
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params 
     const post = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: {
         author: {
           select: {
@@ -43,9 +44,11 @@ export async function GET(
 // PUT update post by ID (admin only)
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     const session = await getServerSession(authOptions)
 
     if (!session || (session.user as any).role !== 'admin') {
@@ -72,7 +75,7 @@ export async function PUT(
     } = body
 
     const existingPost = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     })
 
     if (!existingPost) {
@@ -83,7 +86,7 @@ export async function PUT(
     }
 
     const post = await prisma.post.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         title,
         slug,
@@ -124,9 +127,10 @@ export async function PUT(
 // DELETE post by ID (admin only)
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
 
     if (!session || (session.user as any).role !== 'admin') {
@@ -137,7 +141,7 @@ export async function DELETE(
     }
 
     await prisma.post.delete({
-      where: { id: params.id },
+      where: { id: id },
     })
 
     return NextResponse.json({ message: 'Post deleted successfully' })
