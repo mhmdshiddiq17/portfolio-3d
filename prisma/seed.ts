@@ -5,10 +5,13 @@ const prisma = new PrismaClient()
 
 async function main() {
   console.log('🌱 Seeding database...')
+  console.log('📊 Database URL:', process.env.DATABASE_URL?.split('@')[1] || 'not set')
 
   // Create admin user
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@portfolio.com'
   const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'
+
+  console.log('👤 Creating admin user:', adminEmail)
 
   const hashedPassword = await bcrypt.hash(adminPassword, 10)
 
@@ -127,6 +130,8 @@ Good luck pada perjalanan karir Anda! 🌟`,
       publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
     },
   ]
+
+  console.log('📝 Creating sample blog posts...')
 
   for (const postData of samplePosts) {
     await prisma.post.upsert({
