@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0e27;
+  --foreground: #ffffff;
+  --primary: #00f0ff;
+  --secondary: #00a8ff;
+  --accent: #0066ff;
+  --dark: #0a0e27;
+  --darker: #050816;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient(135deg, #050816 0%, #0a0e27 50%, #050816 100%);
+  min-height: 100vh;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050816;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00f0ff, #0066ff);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00a8ff, #00f0ff);
+}
+
+/* Glow effect utility */
+.glow-text {
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.5),
+               0 0 40px rgba(0, 240, 255, 0.3),
+               0 0 60px rgba(0, 240, 255, 0.1);
+}
+
+.glow-border {
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3),
+              0 0 40px rgba(0, 240, 255, 0.2);
+}
+
+/* Glassmorphism effect */
+.glass {
+  background: rgba(10, 14, 39, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 240, 255, 0.1);
+}
+
+/* Grid background pattern */
+.grid-pattern {
+  background-image: 
+    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
