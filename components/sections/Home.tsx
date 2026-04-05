@@ -72,7 +72,7 @@ export default function Home() {
               className="flex gap-4 pt-4"
             >
               <motion.a
-                href="https://github.com"
+                href="https://github.com/mhmdshiddiq17"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.2, rotate: 5 }}
@@ -81,7 +81,7 @@ export default function Home() {
                 <Github size={24} />
               </motion.a>
               <motion.a
-                href="https://linkedin.com"
+                href="https://linkedin.com/in/mhmdshiddiq"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.2, rotate: -5 }}
@@ -90,7 +90,7 @@ export default function Home() {
                 <Linkedin size={24} />
               </motion.a>
               <motion.a
-                href="mailto:john@example.com"
+                href="mailto:mhmdshiddiq17@gmail.com"
                 whileHover={{ scale: 1.2, rotate: 5 }}
                 className="w-12 h-12 glass rounded-lg flex items-center justify-center text-primary hover:text-white transition-all duration-300"
               >
