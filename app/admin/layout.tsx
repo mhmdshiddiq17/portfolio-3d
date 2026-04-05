@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
 import Link from 'next/link'
-import { Home, FileText, LogOut, Mail } from 'lucide-react'
+import { Home, FileText, LogOut, Mail, FolderKanban } from 'lucide-react'
 
 export default async function AdminLayout({
   children,
@@ -53,6 +53,24 @@ export default async function AdminLayout({
               >
                 <FileText size={20} />
                 <span>New Post</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/admin/portfolio"
+                className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-primary/10 rounded-lg transition-colors"
+              >
+                <FolderKanban size={20} />
+                <span>Portfolio</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/admin/portfolio/new"
+                className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-primary/10 rounded-lg transition-colors"
+              >
+                <FolderKanban size={20} />
+                <span>New Project</span>
               </Link>
             </li>
             <li>
